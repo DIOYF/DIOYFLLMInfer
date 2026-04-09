@@ -195,7 +195,7 @@ namespace op {
 
     protected:
         int32_t group_size_ = 0;
-        bool is_quant_layer = false;
+        bool is_quant_layer_ = false;
         tensor::Tensor scales_;
         std::vector<tensor::Tensor> weights_;
     };

@@ -217,7 +217,7 @@ namespace op {
             LayerType layer_type,bool is_quant_layer,std::string layer_name
             )
     : Layer(device_type,layer_type, std::move(layer_name)),
-    is_quant_layer(is_quant_layer){}
+    is_quant_layer_(is_quant_layer){}
 
 
     size_t LayerParam::weight_size() const {
@@ -269,7 +269,7 @@ namespace op {
             buffer->set_device_type(device_type);
         }
 
-        if (!is_quant_layer) {
+        if (!is_quant_layer_) {
             tensor::Tensor weight(base::DataType::kDataTypeFp32, dims);
             weight.set_device_type(device_type);
             CHECK(weight.assign(buffer));
