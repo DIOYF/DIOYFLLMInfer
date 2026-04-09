@@ -31,9 +31,9 @@ namespace op {
         }
 
         if (input.dims_size() == 1) {
-            kernel::RMSNorm(device_type_)(input, weight, output);
+            kernel::get_rmsnorm_kernel(device_type_)(input, weight, output);
         } else {
-            kernel::RMSNormDim(device_type_)(input, weight, output, dim_);
+            kernel::get_rmsnorm_dim_kernel(device_type_)(input, weight, output, dim_);
         }
 
         return base::error::Success();
