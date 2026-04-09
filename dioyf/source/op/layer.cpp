@@ -19,7 +19,7 @@ namespace op {
     : device_type_(device_type),
     layer_type_(layer_type),
     data_type_(data_type),
-    layer_name_(layer_name){}
+    layer_name_(std::move(layer_name)){}
 
     BaseLayer::~BaseLayer() {}
 
@@ -60,15 +60,43 @@ namespace op {
     base::Status Layer::check_tensor(const tensor::Tensor& tensor,
             base::DeviceType device_type,
             base::DataType data_type) const {
-        // todo : tensor check
-
+        if (tensor.is_empty()) {
+            return base::error::InvalidArgument("the tensor is empty");
+        }
+        if (tensor.device_type() != device_type) {
+            return base::error::InvalidArgument("the tensor has a wrong device type");
+        }
+        if (tensor.data_type() != data_type) {
+            return base::error::InvalidArgument("the tensor has a wrong data type");
+        }
         return base::error::Success();
     }
 
     base::Status Layer::check_tensor_with_dim(const tensor::Tensor& tensor,
         base::DeviceType device_type,
         base::DataType data_type, ...) const {
-        // todo: tensor check
+
+        std::va_list args;
+        if (tensor.is_empty()) {
+            return base::error::InvalidArgument("the tensor is empty");
+        }
+        if (tensor.device_type() != device_type) {
+            return base::error::InvalidArgument("the tensor has a wrong device type");
+        }
+        if (tensor.data_type() != data_type) {
+            return base::error::InvalidArgument("the tensor has a wrong data type");
+        }
+
+        va_start(args, data_type);
+        int32_t dims = tensor.dims_size();
+        for (int32_t i = 0; i < dims; ++i) {
+            int32_t dim = va_arg(args, int32_t);
+            if (dim != tensor.get_dim(i)) {
+                return base::error::InvalidArgument("the tensor has a dim in dim" + std::to_string(i));
+            }
+        }
+        va_end(args);
+
         return base::error::Success();
     }
 
@@ -217,13 +245,55 @@ namespace op {
     }
 
     base::Status LayerParam::set_weight(int32_t idx, const tensor::Tensor& weight) {
-        // todo : set weight
+        CHECK_GE(idx, 0);
+        CHECK_LT(idx, weights_.size());
+        CHECK(weight.data_type() == base::DataType::kDataTypeFp32);
+        if (!weight.is_empty()) {
+            CHECK(weight.device_type() == device_type_);
+        }
+        weights_.at(idx) = weight;
         return base::error::Success();
     }
 
     base::Status LayerParam::set_weight(int32_t idx, const std::vector<int32_t>& dims,
         const void* weight_ptr, base::DeviceType device_type) {
-        // todo: set dim weight
+        CHECK_GE(idx, 0);
+        CHECK_LT(idx, weights_.size());
+        CHECK_NE(weight_ptr, nullptr);
+
+        size_t size = std::accumulate(dims.begin(), dims.end(), sizeof(float), std::multiplies<>());
+        std::shared_ptr<base::Buffer> buffer =
+            std::make_shared<base::Buffer>(size, nullptr, const_cast<void*>(weight_ptr), true);
+
+        if (device_type != base::DeviceType::kDeviceUnknown) {
+            buffer->set_device_type(device_type);
+        }
+
+        if (!is_quant_layer) {
+            tensor::Tensor weight(base::DataType::kDataTypeFp32, dims);
+            weight.set_device_type(device_type);
+            CHECK(weight.assign(buffer));
+            weights_.at(idx) = weight;
+        }
+        else {
+            // is quant layer
+            tensor::Tensor weight(base::DataType::kDataTypeInt8, dims);
+            weight.set_device_type(device_type);
+            CHECK(weight.assign(buffer));
+            weights_.at(idx) = weight;
+
+            const int32_t weight_size = static_cast<int32_t>(weights_.size());
+            CHECK(weight_size % group_size_ == 0);
+
+            int32_t scale_nums = weight_size / group_size_;
+            scales_ = tensor::Tensor{
+                base::DataType::kDataTypeInt32,
+                scale_nums, false, nullptr,
+                reinterpret_cast<float*>((int8_t*)weight_ptr + weight_size)};
+
+            scales_.set_device_type(device_type);
+        }
+
         return base::error::Success();
     }
 

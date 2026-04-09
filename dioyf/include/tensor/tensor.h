@@ -57,7 +57,7 @@ namespace tensor {
 
         size_t byte_size() const;
 
-        int32_t dim_size() const;
+        int32_t dims_size() const;
 
         base::DataType data_type() const;
 

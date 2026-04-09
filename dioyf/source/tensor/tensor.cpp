@@ -186,7 +186,7 @@ namespace tensor {
 
     size_t Tensor::byte_size() const { return size_ * data_type_size(data_type_);}
 
-    int32_t Tensor::dim_size() const {return static_cast<int32_t>(dims_.size());}
+    int32_t Tensor::dims_size() const {return static_cast<int32_t>(dims_.size());}
 
     base::DataType Tensor::data_type() const {return data_type_;}
 
