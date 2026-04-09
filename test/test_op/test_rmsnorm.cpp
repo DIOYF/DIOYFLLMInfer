@@ -1,0 +1,36 @@
+//
+// Created by zhou on 2026/4/9.
+//
+
+#include <cuda_runtime_api.h>
+#include <glog/logging.h>
+#include <gtest/gtest.h>
+#include "../source/op/kernels/kernels_interface.h"
+#include "../utils.cuh"
+#include "base/buffer.h"
+
+TEST(test_rmsnorm_cu, rmsnorm_nostream) {
+    auto alloc_cpu = base::CPUDeviceAllocatorFactory::get_instance();
+
+    int32_t size = 32 * 15;
+
+    tensor::Tensor in_cpu(base::DataType::kDataTypeFp32, size, true, alloc_cpu);
+    tensor::Tensor wei_cpu(base::DataType::kDataTypeFp32, size, true, alloc_cpu);
+    tensor::Tensor out_cpu(base::DataType::kDataTypeFp32, size, true, alloc_cpu);
+
+    std::random_device rd;
+    std::mt19937 mt(rd());
+    std::uniform_real_distribution<float> dist(0.f, 1.f);
+    for (int i = 0; i < size; ++i) {
+        in_cpu.index<float>(i) = dist(mt);
+        wei_cpu.index<float>(i) = dist(mt);
+    }
+
+    kernel::RMSNorm(base::DeviceType::kDeviceCPU)(in_cpu, wei_cpu, out_cpu);
+
+    kernel::RMSNorm(base::DeviceType::kDeviceCPU)(in_cpu, wei_cpu, out_cpu);
+
+    for (int i = 0; i < size; ++i) {
+        ASSERT_NEAR(out_cpu.index<float>(i), out_cpu.index<float>(i), 1e-5f);
+    }
+}
