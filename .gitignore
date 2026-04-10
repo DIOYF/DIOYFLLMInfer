@@ -18,6 +18,9 @@ cmake_install.cmake
 Makefile
 compile_commands.json
 
+# model file
+.bin
+
 # Ninja
 .ninja_deps
 .ninja_log
