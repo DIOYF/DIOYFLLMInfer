@@ -17,7 +17,7 @@ cmake ..
 make -j32
 
 # run in protect root path
-./build/demo/llama_infer /models/stories110M.bin /models/tokenizer.model
+./build/demo/llama_infer ./models/stories110M.bin ./models/tokenizer.model
 
 ```
 
