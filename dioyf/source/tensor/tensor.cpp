@@ -50,7 +50,7 @@ namespace tensor {
         } else {
             if (ptr != nullptr) {
                 CHECK(need_alloc == false)
-                << "need_alloc is true while ptr is not nullptr";
+                    << "The need_alloc is is true when ptr parameter is not a null pointer.";
                 init_buffer(alloc, data_type_, need_alloc, ptr);
             }
         }
@@ -66,13 +66,10 @@ namespace tensor {
         if (need_alloc && alloc) {
             allocate(alloc);
         } else {
-            if (ptr != nullptr) {
-                CHECK(need_alloc == false)
-                << "need_alloc is true while ptr is not nullptr";
-                init_buffer(alloc, data_type_, need_alloc, ptr);
-            }
+            init_buffer(alloc, data_type_, need_alloc, ptr);
         }
     }
+
     Tensor::Tensor(base::DataType data_type, int32_t dim0, int32_t dim1, int32_t dim2,
                     bool need_alloc,std::shared_ptr<base::DeviceAllocator> alloc,
                     void* ptr)
@@ -84,11 +81,7 @@ namespace tensor {
         if (need_alloc && alloc) {
             allocate(alloc);
         } else {
-            if (ptr != nullptr) {
-                CHECK(need_alloc == false)
-                << "need_alloc is true while ptr is not nullptr";
-                init_buffer(alloc, data_type_, need_alloc, ptr);
-            }
+            init_buffer(alloc, data_type_, need_alloc, ptr);
         }
     }
 
@@ -104,28 +97,19 @@ namespace tensor {
         if (need_alloc && alloc) {
             allocate(alloc);
         } else {
-            if (ptr != nullptr) {
-                CHECK(need_alloc == false)
-                << "need_alloc is true while ptr is not nullptr";
-                init_buffer(alloc, data_type_, need_alloc, ptr);
-            }
+            init_buffer(alloc, data_type_, need_alloc, ptr);
         }
     }
 
     Tensor::Tensor(base::DataType data_type, std::vector<int32_t> dims,
                     bool need_alloc,std::shared_ptr<base::DeviceAllocator> alloc,
                     void* ptr)
-    : data_type_(data_type) {
-        dims_ = std::move(dims);
-        size_ = reduce_dimension(dims.begin(), dims.end(), 1);
+    : dims_(std::move(dims)),  data_type_(data_type) {
+        size_ = reduce_dimension(dims_.begin(), dims_.end(), 1);
         if (need_alloc && alloc) {
             allocate(alloc);
         } else {
-            if (ptr != nullptr) {
-                CHECK(need_alloc == false)
-                << "need_alloc is true while ptr is not nullptr";
-                init_buffer(alloc, data_type_, need_alloc, ptr);
-            }
+            init_buffer(alloc, data_type_, need_alloc, ptr);
         }
     }
 
@@ -170,7 +154,7 @@ namespace tensor {
         }
 
         if (size > size_) {
-            auto new_buffer = std::make_shared<base::Buffer>(data_type_size(data_type_) * size_, buffer_->allocator());
+            auto new_buffer = std::make_shared<base::Buffer>(data_type_size(data_type_) * size, buffer_->allocator());
             CHECK(new_buffer->allocate());
             new_buffer->copy_from(buffer_.get());
             this->buffer_ = new_buffer;
@@ -235,7 +219,7 @@ namespace tensor {
     void Tensor::reset(base::DataType data_type, const std::vector<int32_t>& dims) {
         data_type_ = data_type;
         dims_ = dims;
-        size_ = reduce_dimension(dims.begin(), dims.end(), 1);
+        size_ = reduce_dimension(dims_.begin(), dims_.end(), 1);
         buffer_ = nullptr;
     }
 

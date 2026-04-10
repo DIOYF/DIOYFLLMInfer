@@ -92,7 +92,7 @@ namespace op {
         for (int32_t i = 0; i < dims; ++i) {
             int32_t dim = va_arg(args, int32_t);
             if (dim != tensor.get_dim(i)) {
-                return base::error::InvalidArgument("the tensor has a dim in dim" + std::to_string(i));
+                return base::error::InvalidArgument("the tensor has a wrong dim in dim" + std::to_string(i));
             }
         }
         va_end(args);
@@ -160,6 +160,15 @@ namespace op {
     void Layer::to_cuda() {
         // todo : cuda support
     }
+
+    void Layer::set_cuda_config(std::shared_ptr<kernel::CudaConfig> config) {
+        if (!config) {
+            return;
+        }
+        this->cuda_config_ = config;
+    }
+
+    std::shared_ptr<kernel::CudaConfig> Layer::cuda_config() const { return cuda_config_; }
 
     base::Status Layer::forward(const tensor::Tensor& input1, const tensor::Tensor& output1) {
         this->set_input(0, input1);

@@ -5,7 +5,7 @@
 #ifndef DIOYF_INFER_LAYER_H
 #define DIOYF_INFER_LAYER_H
 
-// #include "base/cuda_config.h"
+#include "base/cuda_config.h"
 #include <string>
 #include <vector>
 #include "base/base.h"
@@ -158,10 +158,14 @@ namespace op {
 
         virtual void to_cuda();
 
+        void set_cuda_config(std::shared_ptr<kernel::CudaConfig> config);
+
+        std::shared_ptr<kernel::CudaConfig> cuda_config() const;
+
     protected:
         std::vector<tensor::Tensor> inputs_;
         std::vector<tensor::Tensor> outputs_;
-        // std::shared_ptr<kernel::CudaConfig> cuda_config_;
+        std::shared_ptr<kernel::CudaConfig> cuda_config_;
     };
 
     class LayerParam : public Layer {
