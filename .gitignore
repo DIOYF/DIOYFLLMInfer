@@ -19,7 +19,7 @@ Makefile
 compile_commands.json
 
 # model file
-.bin
+*.bin
 
 # Ninja
 .ninja_deps
