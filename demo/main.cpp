@@ -64,7 +64,7 @@ int32_t generate(
 int main(int argc, char** argv) {
     if (argc != 3) {
         LOG(INFO) << "Usage: ./demo checkpoint path tokenizer path";
-        LOG(INFO) << "please use ./llama_infer /models/llama_model_1B.bin /models/tokenizer.model ";
+        LOG(INFO) << "please use ./llama_infer ./models/stories110M.bin ./models/tokenizer.model ";
         return -1;
     }
 
