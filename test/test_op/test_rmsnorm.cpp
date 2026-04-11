@@ -26,9 +26,9 @@ TEST(test_rmsnorm_cu, rmsnorm_nostream) {
         wei_cpu.index<float>(i) = dist(mt);
     }
 
-    kernel::get_rmsnorm_kernel(base::DeviceType::kDeviceCPU)(in_cpu, wei_cpu, out_cpu);
+    kernel::get_rmsnorm_kernel(base::DeviceType::kDeviceCPU)(in_cpu, wei_cpu, out_cpu, nullptr);
 
-    kernel::get_rmsnorm_kernel(base::DeviceType::kDeviceCPU)(in_cpu, wei_cpu, out_cpu);
+    kernel::get_rmsnorm_kernel(base::DeviceType::kDeviceCPU)(in_cpu, wei_cpu, out_cpu, nullptr);
 
     for (int i = 0; i < size; ++i) {
         ASSERT_NEAR(out_cpu.index<float>(i), out_cpu.index<float>(i), 1e-5f);

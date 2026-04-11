@@ -57,7 +57,7 @@ namespace op {
 
 
 
-    // todo : BPE support
+    // BPE support
 #if defined (LLAMA3_SUPPORT) || defined (QWEN2_SUPPORT) || defined (QWEN3_SUPPORT)
 
 #endif
