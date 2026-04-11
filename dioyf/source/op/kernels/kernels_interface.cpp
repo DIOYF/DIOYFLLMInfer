@@ -14,7 +14,7 @@
 #include "cpu/softmax_kernel.h"
 #include "cpu/swiglu_kernel.h"
 
-/*
+
 #include "cuda/add_kernel.cuh"
 #include "cuda/emb_kernel.cuh"
 #include "cuda/matmul_kernel.cuh"
@@ -22,7 +22,7 @@
 #include "cuda/rmsnorm_kernel.cuh"
 #include "cuda/rope_kernel.cuh"
 #include "cuda/swiglu_kernel.cuh"
-*/
+
 #include "kernels_interface.h"
 
 namespace kernel {
@@ -30,7 +30,7 @@ namespace kernel {
         if (device_type == base::DeviceType::kDeviceCPU) {
           return add_kernel_cpu;
         } else if (device_type == base::DeviceType::kDeviceCUDA) {
-          // todo return add_kernel_cu;
+          return add_kernel_cu;
         } else {
           LOG(FATAL) << "Unknown device type for get a add kernel.";
           return nullptr;
@@ -42,7 +42,7 @@ namespace kernel {
         if (device_type == base::DeviceType::kDeviceCPU) {
           return emb_kernel_normal;
         } else if (device_type == base::DeviceType::kDeviceCUDA) {
-          // todo return emb_kernel_cu;
+          return emb_kernel_cu;
         } else {
           LOG(FATAL) << "Unknown device type for get an embedding kernel.";
           return nullptr;
@@ -52,9 +52,9 @@ namespace kernel {
 
     MatmulKernel get_matmul_kernel(base::DeviceType device_type) {
         if (device_type == base::DeviceType::kDeviceCPU) {
-          return matmul_kernel_cpu;
+            return matmul_kernel_cpu;
         } else if (device_type == base::DeviceType::kDeviceCUDA) {
-          // todo return matmul_kernel_cu;
+            return matmul_kernel_cu;
         } else {
           LOG(FATAL) << "Unknown device type for get an matmul kernel.";
           return nullptr;
@@ -64,7 +64,7 @@ namespace kernel {
 
     MatmulKernelQuant get_matmul_kernel_quant8(base::DeviceType device_type) {
         if (device_type == base::DeviceType::kDeviceCUDA) {
-          // todo return matmul_kernel_cu_qint8;
+          return matmul_kernel_cu_qint8;
         } else {
           LOG(FATAL) << "Unknown device type for get an matmul kernel.";
           return nullptr;
@@ -132,7 +132,7 @@ namespace kernel {
             return rmsnorm_kernel_cpu;
         }
         else if (device_type == base::DeviceType::kDeviceCUDA) {
-            // todo: cuda compute
+            // todo: return rmsnorm_kernel_cu;
             return nullptr;
         }
         else {
@@ -144,7 +144,7 @@ namespace kernel {
 
     RMSNormKernelDim get_rmsnorm_dim_kernel(base::DeviceType device_type) {
         if (device_type == base::DeviceType::kDeviceCUDA) {
-            // todo: cuda compute
+            // todo: return rmsnorm_kernel_dim_cu;
             return nullptr;
         } else{
             LOG(FATAL) << "Unknown device type for get a rmsnorm dim kernel.";

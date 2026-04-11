@@ -1,0 +1,8 @@
+//
+// Created by zhou on 2026/4/11.
+//
+
+#ifndef DIOYF_INFER_RMS_NORM_KERNEL_CUH
+#define DIOYF_INFER_RMS_NORM_KERNEL_CUH
+
+#endif //DIOYF_INFER_RMS_NORM_KERNEL_CUH
