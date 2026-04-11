@@ -5,7 +5,8 @@
 namespace kernel {
 
     void emb_kernel_normal(const tensor::Tensor& input, const tensor::Tensor& weight,
-                           const tensor::Tensor& output, int32_t vocab_size) {
+                           const tensor::Tensor& output, int32_t vocab_size,
+                           void* stream) {
         CHECK(!input.is_empty());
         CHECK(!weight.is_empty());
         const int32_t input_num = static_cast<int32_t>(input.size());

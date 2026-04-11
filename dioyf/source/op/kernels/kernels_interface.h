@@ -6,39 +6,45 @@
 #define DIOYF_INFER_KERNELS_INTERFACE_H
 
 #include "tensor/tensor.h"
-
+#include "base/cuda_config.h"
 namespace kernel {
     typedef void (*AddKernel)(
         const tensor::Tensor& input1,
         const tensor::Tensor& input2,
-        const tensor::Tensor& output
+        const tensor::Tensor& output,
+        void* stream
         );
 
     typedef void (*MatmulKernel)(
         const tensor::Tensor& input,
         const tensor::Tensor& weight,
         const tensor::Tensor& output,
-        float scale
+        float scale,
+        const CudaConfig* config
         );
 
     typedef void (*MatmulKernelQuant)(
         const tensor::Tensor& input,
         const tensor::Tensor& weight,
         const tensor::Tensor& output, int32_t group_size,
-        const tensor::Tensor& scale
+        const tensor::Tensor& scale,
+        const CudaConfig* config
         );
 
     typedef void (*EmbeddingKernel)(
         const tensor::Tensor& input,
         const tensor::Tensor& weight,
         const tensor::Tensor& output,
-        int32_t vocab_size
+        int32_t vocab_size,
+        void* stream
         );
 
     typedef void (*SwigluKernel)(
         const tensor::Tensor& input1,
         const tensor::Tensor& input2,
-        const tensor::Tensor& output);
+        const tensor::Tensor& output,
+        void* stream
+        );
 
     typedef void (*MHAKernel)(
         int32_t pos, int32_t head_num, int32_t layer_index,
@@ -49,20 +55,23 @@ namespace kernel {
         const tensor::Tensor& score_tensor,
         const tensor::Tensor& key_cache_tensor,
         const tensor::Tensor& value_cache_tensor,
-        base::DeviceType device_type
+        base::DeviceType device_type,
+        const CudaConfig* config
         );
 
     typedef void (*RMSNormKernel) (
         const tensor::Tensor& input,
         const tensor::Tensor& weight,
-        const tensor::Tensor& output
+        const tensor::Tensor& output,
+        void* stream
         );
 
     typedef void (*RMSNormKernelDim) (
         const tensor::Tensor& input,
         const tensor::Tensor& weight,
         const tensor::Tensor& output,
-        int32_t dim);
+        int32_t dim,
+        void* stream);
 
     typedef void (*RoPEKernel)(
         int32_t dim, int32_t kv_dim, int32_t head_size,
@@ -70,22 +79,27 @@ namespace kernel {
         const tensor::Tensor& input_k,
         const tensor::Tensor& input_pos,
         const tensor::Tensor& sin_cache,
-        const tensor::Tensor& cos_cache
+        const tensor::Tensor& cos_cache,
+        void* stream
         );
 
     typedef void (*ScaleKernel)(
         float scale,
-        const tensor::Tensor& input
+        const tensor::Tensor& input,
+        void* stream
         );
 
     typedef void (*SoftmaxInplaceKernel)(
-        const tensor::Tensor& input);
+        const tensor::Tensor& input,
+        void* stream
+        );
 
     typedef void (*ScaleSumKernel)(
         const tensor::Tensor& value,
         const tensor::Tensor& scale,
         const tensor::Tensor& output,
-        int t, int size, int stride
+        int t, int size, int stride,
+        void* stream
         );
 
     void softmax_inplace_cpu(const float* input_ptr, size_t size);

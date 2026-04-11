@@ -36,7 +36,8 @@ base::Status MultiHeadAttention::forward() {
   }
   kernel::get_mha_kernel(device_type_)(pos_, head_num_, layer_index_, seq_len_, kv_dim_, kv_mul_,
                                        head_size_, mha_out, query_tensor, score_tensor,
-                                       key_cache_tensor, value_cache_tensor, device_type_);
+                                       key_cache_tensor, value_cache_tensor, device_type_,
+                                       cuda_config_ ? cuda_config_.get() : nullptr);
   return base::error::Success();
 }
 

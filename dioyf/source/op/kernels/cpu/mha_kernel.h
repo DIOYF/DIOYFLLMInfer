@@ -5,6 +5,7 @@
 #ifndef DIOYF_INFER_MHA_KERNEL_H
 #define DIOYF_INFER_MHA_KERNEL_H
 #include "base/base.h"
+#include "base/cuda_config.h"
 #include "tensor/tensor.h"
 namespace kernel {
     void mha_kernel(
@@ -16,7 +17,8 @@ namespace kernel {
         const tensor::Tensor& score_tensor,
         const tensor::Tensor& key_cache_tensor,
         const tensor::Tensor& value_cache_tensor,
-        base::DeviceType device_type
+        base::DeviceType device_type,
+        const CudaConfig* config = nullptr
         );
 }  // namespace kernel
 #endif //DIOYF_INFER_MHA_KERNEL_H

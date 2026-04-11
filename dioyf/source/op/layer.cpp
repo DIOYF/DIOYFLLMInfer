@@ -158,7 +158,16 @@ namespace op {
     }
 
     void Layer::to_cuda() {
-        // todo : cuda support
+        for (auto& input : inputs_) {
+            if (!input.is_empty()) {
+                input.to_cuda(cuda_config_ ? cuda_config_->stream : nullptr);
+            }
+        }
+        for (auto& output : outputs_) {
+            if (!output.is_empty()) {
+                output.to_cuda(cuda_config_ ? cuda_config_->stream : nullptr);
+            }
+        }
     }
 
     void Layer::set_cuda_config(std::shared_ptr<kernel::CudaConfig> config) {
@@ -250,7 +259,13 @@ namespace op {
     }
 
     void LayerParam::to_cuda() {
-        // todo : to cuda
+        Layer::to_cuda();
+        for (auto& weight : weights_) {
+            weight.to_cuda(cuda_config_ ? cuda_config_->stream : nullptr);
+        }
+        if (!scales_.is_empty()) {
+            scales_.to_cuda(cuda_config_ ? cuda_config_->stream : nullptr);
+        }
     }
 
     base::Status LayerParam::set_weight(int32_t idx, const tensor::Tensor& weight) {

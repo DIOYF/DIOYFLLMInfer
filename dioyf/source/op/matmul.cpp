@@ -70,13 +70,15 @@ namespace op {
         }
         if (is_quant_layer_) {
             kernel::get_matmul_kernel_quant8(device_type_)(get_input(0), get_weight(0), get_output(0),
-                                                           group_size_, scales_);
+                                                           group_size_, scales_, cuda_config_ ? cuda_config_.get() : nullptr);
         } else {
-            kernel::get_matmul_kernel(device_type_)(get_input(0), get_weight(0), get_output(0), 1.f);
+            kernel::get_matmul_kernel(device_type_)(get_input(0), get_weight(0), get_output(0), 1.f,
+                cuda_config_ ? cuda_config_.get() : nullptr);
         }
 
         if (has_bias_) {
-            kernel::get_add_kernel(device_type_)(get_output(0), get_bias(0), get_output(0));
+            kernel::get_add_kernel(device_type_)(get_output(0), get_bias(0), get_output(0),
+                cuda_config_ ? cuda_config_->stream : nullptr);
         }
 
         return base::error::Success();
@@ -136,7 +138,7 @@ namespace op {
         LayerParam::to_cuda();
         if (has_bias_) {
             for (auto& bias : bias_) {
-                // todo : to cuda
+                bias.to_cuda(cuda_config_ ? cuda_config_->stream : nullptr);
             }
         }
     }

@@ -27,13 +27,15 @@ namespace op {
         auto output = get_output(0);
 
         if (device_type_ == base::DeviceType::kDeviceCUDA) {
-            // todo CHECK(cuda_config != nullptr)
+            CHECK(cuda_config_ != nullptr);
         }
 
         if (input.dims_size() == 1) {
-            kernel::get_rmsnorm_kernel(device_type_)(input, weight, output);
+            kernel::get_rmsnorm_kernel(device_type_)(input, weight, output,
+                cuda_config_ ? cuda_config_->stream : nullptr);
         } else {
-            kernel::get_rmsnorm_dim_kernel(device_type_)(input, weight, output, dim_);
+            kernel::get_rmsnorm_dim_kernel(device_type_)(input, weight, output, dim_,
+                cuda_config_ ? cuda_config_->stream : nullptr);
         }
 
         return base::error::Success();

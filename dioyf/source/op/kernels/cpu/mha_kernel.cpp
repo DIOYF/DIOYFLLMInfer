@@ -9,7 +9,7 @@ void mha_kernel(int32_t pos, int32_t head_num, int32_t layer_index, int32_t seq_
                 int32_t kv_mul, int32_t head_size, const tensor::Tensor& mha_out,
                 const tensor::Tensor& query_tensor, const tensor::Tensor& score_tensor,
                 const tensor::Tensor& key_cache_tensor, const tensor::Tensor& value_cache_tensor,
-                base::DeviceType device_type
+                base::DeviceType device_type,const CudaConfig* config
                 ) {
   int32_t layer_offset = layer_index * seq_len * kv_dim;
   float scale = 1.f / std::sqrt(static_cast<float>(head_size));
@@ -18,7 +18,7 @@ void mha_kernel(int32_t pos, int32_t head_num, int32_t layer_index, int32_t seq_
     if (device_type == base::DeviceType::kDeviceCPU) {
       allocator = base::CPUDeviceAllocatorFactory::get_instance();
     } else {
-      // todo: allocator = base::CUDADeviceAllocatorFactory::get_instance();
+      allocator = base::CUDADeviceAllocatorFactory::get_instance();
     }
   for (int32_t h = 0; h < head_num; ++h) {
     float* score_head_addr = const_cast<float*>(score_tensor.ptr<float>() + h * seq_len);
@@ -39,13 +39,13 @@ void mha_kernel(int32_t pos, int32_t head_num, int32_t layer_index, int32_t seq_
                                score_head_addr + t);
       key_mat.set_device_type(device_type);
       score_mat.set_device_type(device_type);
-      get_matmul_kernel(device_type)(query_mat, key_mat, score_mat, scale);
+      get_matmul_kernel(device_type)(query_mat, key_mat, score_mat, scale, config);
     }
 
     tensor::Tensor score_head_tensor(base::DataType::kDataTypeFp32, pos + 1, false, nullptr,
                                      score_head_addr);
     score_head_tensor.set_device_type(device_type);
-    get_softmax_kernel(device_type)(score_head_tensor);
+    get_softmax_kernel(device_type)(score_head_tensor, config ? config->stream : nullptr);
 
     float* output_head_ptr = const_cast<float*>(mha_out.ptr<float>()) + h * head_size;
     allocator->memset_zero(output_head_ptr, sizeof(float) * head_size,nullptr, false);
@@ -59,7 +59,7 @@ void mha_kernel(int32_t pos, int32_t head_num, int32_t layer_index, int32_t seq_
     tensor::Tensor value_tensor(base::DataType::kDataTypeFp32, head_size, false, nullptr,
                                 value_head_addr);
     get_scale_sum_kernel(device_type)(value_tensor, score_head_tensor, output_tensor, pos,
-                                      head_size, kv_dim);
+                                      head_size, kv_dim, config ? config->stream : nullptr);
   }
 }
 }  // namespace kernel

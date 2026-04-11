@@ -18,7 +18,7 @@ namespace base {
     public:
         explicit DeviceAllocator(DeviceType deviceType) : device_type_(deviceType) {}
 
-        virtual ~DeviceAllocator() {}
+        virtual ~DeviceAllocator() = default;
 
         virtual DeviceType device_type() const {return device_type_;}
 
@@ -48,11 +48,31 @@ namespace base {
 
     };
 
-    // todo:CUDA allocator
+    struct CudaMemoryBuffer {
+        void* data;
+        size_t byte_size;
+        bool busy;
+
+        CudaMemoryBuffer() = default;
+
+        CudaMemoryBuffer(void* data, size_t byte_size, bool busy)
+        : data(data), byte_size(byte_size), busy(busy) {}
+    };
+
+
 
     class CUDADeviceAllocator : public DeviceAllocator {
     public:
         explicit CUDADeviceAllocator();
+
+        void* allocate(size_t byte_size) const override;
+
+        void release(void* ptr) const override;
+
+    private:
+        mutable std::map<int, size_t> no_busy_cnt_;
+        mutable std::map<int, std::vector<CudaMemoryBuffer>> big_buffers_map_;
+        mutable std::map<int, std::vector<CudaMemoryBuffer>> cuda_buffers_map_;
     };
 
 
@@ -68,12 +88,17 @@ namespace base {
         static std::shared_ptr<CPUDeviceAllocator> instance;;
     };
 
-
-
-
-
-
-
+    class CUDADeviceAllocatorFactory {
+    public:
+        static std::shared_ptr<CUDADeviceAllocator> get_instance() {
+            if (instance == nullptr) {
+                instance = std::make_shared<CUDADeviceAllocator>();
+            }
+            return instance;
+        }
+    private:
+        static std::shared_ptr<CUDADeviceAllocator> instance;;
+    };
 
 
 }

@@ -6,7 +6,8 @@ namespace kernel {
     void swiglu_kernel_cpu(
         const tensor::Tensor& input1,
         const tensor::Tensor& input2,
-        const tensor::Tensor& output
+        const tensor::Tensor& output,
+        void* stream
         ) {
         CHECK_EQ(input1.is_empty(),false);
         CHECK_EQ(input2.is_empty(),false);

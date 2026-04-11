@@ -31,7 +31,6 @@ namespace model {
         std::shared_ptr<op::Layer> cls_layer_;
         std::shared_ptr<op::Layer> embedding_layer_;
 
-        // todo cuda
         void to_cuda(std::shared_ptr<kernel::CudaConfig> config);
     };
 

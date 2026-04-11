@@ -10,7 +10,8 @@ namespace kernel {
         const tensor::Tensor& value,
         const tensor::Tensor& scale,
         const tensor::Tensor& output,
-        int t, int d, int stride
+        int t, int d, int stride,
+        void* stream = nullptr
         );
 }
 #endif //DIOYF_INFER_SCALE_SUM_KERNEL_H

@@ -9,7 +9,8 @@ namespace kernel {
         const tensor::Tensor& value,
         const tensor::Tensor& scale,
         const tensor::Tensor& output,
-        int pos, int size, int stride) {
+        int pos, int size, int stride,
+        void* stream) {
 
 
         CHECK_EQ(value.is_empty(), false);

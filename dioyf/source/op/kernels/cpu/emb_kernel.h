@@ -10,7 +10,8 @@ namespace kernel {
         const tensor::Tensor& input,
         const tensor::Tensor& weight,
         const tensor::Tensor& output,
-        int32_t vocab_size
+        int32_t vocab_size,
+        void* stream = nullptr
         );
 }  // namespace kernel
 #endif //DIOYF_INFER_EMB_KERNEL_H

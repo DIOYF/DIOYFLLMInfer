@@ -7,7 +7,8 @@
 #include "tensor/tensor.h"
 namespace kernel {
     void softmax_inplace_cpu(
-        const tensor::Tensor& input
+        const tensor::Tensor& input,
+        void* stream = nullptr
         );
 }  // namespace kernel
 #endif //DIOYF_INFER_SOFTMAX_KERNEL_H

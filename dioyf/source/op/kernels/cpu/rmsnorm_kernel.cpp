@@ -7,7 +7,8 @@
 namespace kernel {
     void rmsnorm_kernel_cpu(const tensor::Tensor& input,
         const tensor::Tensor& weight,
-        const tensor::Tensor& output) {
+        const tensor::Tensor& output,
+        void* stream) {
 
         CHECK(!input.is_empty());
         CHECK(!weight.is_empty());

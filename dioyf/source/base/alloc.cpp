@@ -28,15 +28,30 @@ namespace base {
                 break;
             }
             case MemcpyKind::kMemcpyCPU2CUDA: {
-                // todo : toCUDA
+                if (!stream_) {
+                    cudaMemcpy(dest_ptr, src_ptr, byte_size, cudaMemcpyHostToDevice);
+                }
+                else {
+                    cudaMemcpyAsync(dest_ptr, src_ptr, byte_size, cudaMemcpyHostToDevice, stream_);
+                }
                 break;
             }
             case MemcpyKind::kMemcpyCUDA2CPU: {
-                // todo : CUDA2CPU
+                if (!stream_) {
+                    cudaMemcpy(dest_ptr, src_ptr, byte_size, cudaMemcpyDeviceToHost);
+                }
+                else {
+                    cudaMemcpyAsync(dest_ptr, src_ptr, byte_size, cudaMemcpyDeviceToHost, stream_);
+                }
                 break;
             }
             case MemcpyKind::kMemcpyCUDA2CUDA: {
-                // todo : CUDA2CUDA
+                if (!stream_) {
+                    cudaMemcpy(dest_ptr, src_ptr, byte_size, cudaMemcpyDeviceToDevice);
+                }
+                else {
+                    cudaMemcpyAsync(dest_ptr, src_ptr, byte_size, cudaMemcpyDeviceToDevice, stream_);
+                }
                 break;
             }
             default: {
@@ -56,7 +71,16 @@ namespace base {
             std::memset(ptr, 0, byte_size);
         }
         else {
-            // todo: cuda memset
+            if (stream) {
+                cudaStream_t stream_ = static_cast<CUstream_st*>(stream);
+                cudaMemsetAsync(ptr, 0, byte_size, stream_);
+            }
+            else {
+                cudaMemset(ptr, 0, byte_size);
+            }
+            if (need_sync) {
+                cudaDeviceSynchronize();
+            }
         }
     }
 }

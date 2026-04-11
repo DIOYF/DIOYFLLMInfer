@@ -137,7 +137,11 @@ base::Status LLama2Model::init(base::DeviceType device_type) {
                                    get_buffer(ModelBufferType::kCosCache).ptr<float>());
   } else {
     CHECK_NE(cuda_config_, nullptr);
+
     // todo cuda
+    //kernel::sin_cos_cache_calc_cu(config_->head_size_, config_->seq_len_,
+    // get_buffer(ModelBufferType::kSinCache),
+    //                          get_buffer(ModelBufferType::kCosCache), cuda_config_->stream);
   }
 
   sampler_ = std::make_unique<sampler::ArgmaxSampler>(device_type_);
@@ -427,8 +431,7 @@ void LLama2Model::init_mem() {
   if (device_type_ == base::DeviceType::kDeviceCPU) {
     alloc = base::CPUDeviceAllocatorFactory::get_instance();
   } else {
-    // todo cuda mem implement
-    // alloc = base::CUDADeviceAllocatorFactory::get_instance();
+    alloc = base::CUDADeviceAllocatorFactory::get_instance();
   }
 
   if (device_type_ == base::DeviceType::kDeviceCUDA) {
@@ -439,9 +442,9 @@ void LLama2Model::init_mem() {
   std::shared_ptr<base::DeviceAllocator> alloc_cpu =
       base::CPUDeviceAllocatorFactory::get_instance();
 
-  // todo cuda me
-  //std::shared_ptr<base::DeviceAllocator> alloc_cu =
-  //    base::CUDADeviceAllocatorFactory::get_instance();
+
+  std::shared_ptr<base::DeviceAllocator> alloc_cu =
+      base::CUDADeviceAllocatorFactory::get_instance();
 
   tensor::Tensor input_tokens(base::DataType::kDataTypeInt32, 1, true, alloc_cpu);
   tensor::Tensor input_embeddings(base::DataType::kDataTypeFp32, 1, config_->dim_, true, alloc);
