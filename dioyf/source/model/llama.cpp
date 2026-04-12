@@ -10,6 +10,7 @@
 #include <sentencepiece_processor.h>
 #include <utility>
 #include "../op/kernels/cpu/rope_kernel.h"
+#include "../op/kernels/cuda/rope_kernel.cuh"
 
 namespace model {
 
@@ -138,10 +139,9 @@ base::Status LLama2Model::init(base::DeviceType device_type) {
   } else {
     CHECK_NE(cuda_config_, nullptr);
 
-    // todo cuda
-    //kernel::sin_cos_cache_calc_cu(config_->head_size_, config_->seq_len_,
-    // get_buffer(ModelBufferType::kSinCache),
-    //                          get_buffer(ModelBufferType::kCosCache), cuda_config_->stream);
+    kernel::sin_cos_cache_calc_cu(config_->head_size_, config_->seq_len_,
+                              get_buffer(ModelBufferType::kSinCache),
+                              get_buffer(ModelBufferType::kCosCache), cuda_config_->stream);
   }
 
   sampler_ = std::make_unique<sampler::ArgmaxSampler>(device_type_);

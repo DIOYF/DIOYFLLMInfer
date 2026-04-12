@@ -76,7 +76,7 @@ namespace kernel {
         if (device_type == base::DeviceType::kDeviceCPU) {
           return mha_kernel;
         } else if (device_type == base::DeviceType::kDeviceCUDA) {
-          //todo return mha_kernel_cu;
+          return mha_kernel_cu;
         } else {
           LOG(FATAL) << "Unknown device type for get an mha kernel.";
           return nullptr;
@@ -88,7 +88,7 @@ namespace kernel {
         if (device_type == base::DeviceType::kDeviceCPU) {
           return rope_kernel_cpu;
         } else if (device_type == base::DeviceType::kDeviceCUDA) {
-          // todo return rope_kernel_cu;
+          return rope_kernel_cu;
         } else {
           LOG(FATAL) << "Unknown device type for get a rope kernel.";
           return nullptr;
@@ -120,7 +120,7 @@ namespace kernel {
         if (device_type == base::DeviceType::kDeviceCPU) {
           return swiglu_kernel_cpu;
         } else if (device_type == base::DeviceType::kDeviceCUDA) {
-          // todo return swiglu_kernel_cu;
+          return swiglu_kernel_cu;
         } else {
           LOG(FATAL) << "Unknown device type for get a swiglu kernel.";
           return nullptr;
@@ -132,8 +132,7 @@ namespace kernel {
             return rmsnorm_kernel_cpu;
         }
         else if (device_type == base::DeviceType::kDeviceCUDA) {
-            // todo: return rmsnorm_kernel_cu;
-            return nullptr;
+            return rmsnorm_kernel_cu;
         }
         else {
             LOG(FATAL) << "Unknown device type for get a rmsnorm kernel.";
@@ -144,8 +143,7 @@ namespace kernel {
 
     RMSNormKernelDim get_rmsnorm_dim_kernel(base::DeviceType device_type) {
         if (device_type == base::DeviceType::kDeviceCUDA) {
-            // todo: return rmsnorm_kernel_dim_cu;
-            return nullptr;
+            return rmsnorm_kernel_cu_dim;
         } else{
             LOG(FATAL) << "Unknown device type for get a rmsnorm dim kernel.";
             return nullptr;

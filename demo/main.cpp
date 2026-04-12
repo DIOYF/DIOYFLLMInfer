@@ -74,7 +74,8 @@ int main(int argc, char** argv) {
     model::LLama2Model model(base::TokenizerType::kEncodeSpe,
         tokenizer_path, checkpoint_path, false);
 
-    auto init_status = model.init(base::DeviceType::kDeviceCPU);
+    // change kDeviceCPU to run in cpu
+    auto init_status = model.init(base::DeviceType::kDeviceCUDA);
 
     if (!init_status) {
         LOG(FATAL) << "The model init failed, the error code is: " << init_status.get_err_code();
